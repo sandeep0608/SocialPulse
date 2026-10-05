@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Build output (the generated dashboard — regenerate with `make build`)
+output/*.html
+output/*.json
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Keep the sample CSVs and the browsable demo dashboard tracked:
+!data/sample_posts.csv
+!data/sample_broadcasts.csv
+!docs/dashboard.html

@@ -1,0 +1,16 @@
+[project]
+name = "social-pulse"
+version = "1.0.0"
+description = "Turn a weekly social-media CSV export into a single, self-contained, interactive HTML dashboard."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = ["pandas>=1.5"]
+keywords = ["analytics", "dashboard", "social-media", "reporting", "data-visualization", "pandas"]
+
+[project.scripts]
+social-pulse = "generate_dashboard:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"

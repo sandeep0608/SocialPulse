@@ -1,0 +1,737 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Social Pulse — Social Analytics Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --page:#f3f6fa; --surface:#ffffff; --surface-2:#f5f8fc; --surface-3:#eaf1f9;
+  --ink:#12161d; --secondary:#59636f; --muted:#8b95a3;
+  --hairline:#e8edf3; --hairline-2:#d9e1ea;
+  --blue:#2c93ff; --blue-ink:#1178e6; --blue-strong:#0e6fe0; --blue-soft:#e7f1ff;
+  --orange:#ff7a1a; --orange-ink:#d65e00; --orange-soft:#fff0e2;
+  --good:#0a9a3f; --good-ink:#07822f; --good-soft:#e4f6ea; --crit:#d8443a; --crit-ink:#bd3229; --crit-soft:#fdeceb;
+  --s-linkedin:#2c93ff; --s-youtube:#ff7a1a; --s-tiktok:#1baf7a; --s-instagram:#e87ba4; --s-twitter:#4a3aa7; --s-facebook:#1f9d55;
+  --grid:#eaeff5; --axis:#d4dde7;
+  --shadow:0 1px 2px rgba(18,30,50,.04), 0 12px 30px -14px rgba(18,40,80,.16);
+  --shadow-lg:0 2px 4px rgba(18,30,50,.05), 0 28px 56px -22px rgba(18,40,80,.24);
+  --r:16px; --r-sm:11px;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0b0f16; --surface:#151b24; --surface-2:#111823; --surface-3:#1c2632;
+  --ink:#eaf1f8; --secondary:#9aa6b5; --muted:#657182;
+  --hairline:#1f2833; --hairline-2:#2a3542;
+  --blue:#3e9bff; --blue-ink:#7dbbff; --blue-strong:#8cc3ff; --blue-soft:#14263b;
+  --orange:#ff8a33; --orange-ink:#ffa860; --orange-soft:#2a1d12;
+  --good:#2bb45a; --good-ink:#4cc873; --good-soft:#13251a; --crit:#ef5f56; --crit-ink:#f38178; --crit-soft:#2a1614;
+  --s-linkedin:#3987e5; --s-youtube:#d95926; --s-tiktok:#199e70; --s-instagram:#d55181; --s-twitter:#9085e9; --s-facebook:#35c46e;
+  --grid:#1a2430; --axis:#2a3542;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 32px -16px rgba(0,0,0,.7);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.5), 0 30px 60px -24px rgba(0,0,0,.85);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --page:#0b0f16; --surface:#151b24; --surface-2:#111823; --surface-3:#1c2632;
+  --ink:#eaf1f8; --secondary:#9aa6b5; --muted:#657182;
+  --hairline:#1f2833; --hairline-2:#2a3542;
+  --blue:#3e9bff; --blue-ink:#7dbbff; --blue-strong:#8cc3ff; --blue-soft:#14263b;
+  --orange:#ff8a33; --orange-ink:#ffa860; --orange-soft:#2a1d12;
+  --good:#2bb45a; --good-ink:#4cc873; --good-soft:#13251a; --crit:#ef5f56; --crit-ink:#f38178; --crit-soft:#2a1614;
+  --s-linkedin:#3987e5; --s-youtube:#d95926; --s-tiktok:#199e70; --s-instagram:#d55181; --s-twitter:#9085e9; --s-facebook:#35c46e;
+  --grid:#1a2430; --axis:#2a3542;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 32px -16px rgba(0,0,0,.7);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.5), 0 30px 60px -24px rgba(0,0,0,.85);
+}}
+*{box-sizing:border-box} html,body{margin:0}
+body{background:var(--page); color:var(--ink); font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif; font-size:14px; line-height:1.55; -webkit-font-smoothing:antialiased}
+.tnum{font-variant-numeric:tabular-nums} h1,h2,h3{margin:0; letter-spacing:-.015em} button{font-family:inherit; cursor:pointer}
+.eyebrow{font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--orange-ink)}
+
+.app{display:grid; grid-template-columns:250px 1fr; min-height:100vh}
+.sidebar{position:sticky; top:0; height:100vh; align-self:start; background:var(--surface); border-right:1px solid var(--hairline); display:flex; flex-direction:column; padding:22px 15px; gap:22px}
+.brand{display:flex; align-items:center; gap:10px; padding:4px 8px}
+.brand-mark{width:32px; height:32px; flex:0 0 auto}
+.brand-txt{font-weight:700; font-size:17px; letter-spacing:-.02em}
+.brand-txt .b{color:var(--blue-ink)} .brand-txt .ai{color:var(--blue-ink)}
+.brand-txt small{display:block; font-size:9.5px; font-weight:600; letter-spacing:.18em; color:var(--muted); text-transform:uppercase; margin-top:2px}
+.nav{display:flex; flex-direction:column; gap:2px} .nav-h{font-size:10px; font-weight:700; letter-spacing:.16em; color:var(--muted); text-transform:uppercase; padding:10px 12px 6px}
+.nav-btn{display:flex; align-items:center; gap:11px; width:100%; text-align:left; background:transparent; border:0; color:var(--secondary); padding:10px 12px; border-radius:var(--r-sm); font-size:13.5px; font-weight:500; transition:.14s}
+.nav-btn:hover{background:var(--surface-2); color:var(--ink)}
+.nav-btn.active{background:var(--blue-soft); color:var(--blue-strong); font-weight:600}
+.nav-btn svg{width:18px; height:18px; flex:0 0 auto; stroke:currentColor; fill:none; stroke-width:1.7}
+.nav-btn .n{margin-left:auto; font-size:11px; color:var(--muted); font-weight:600; font-variant-numeric:tabular-nums}
+.nav-btn.active .n{color:var(--blue-strong)}
+.side-foot{margin-top:auto; padding:14px 12px 2px; border-top:1px solid var(--hairline); font-size:11.5px; color:var(--muted); line-height:1.6}
+.side-foot b{color:var(--secondary)}
+.tag-live{display:inline-flex; align-items:center; gap:6px; font-size:9.5px; font-weight:700; letter-spacing:.1em; color:var(--good-ink); margin-bottom:9px}
+.tag-live i{width:7px; height:7px; border-radius:50%; background:var(--good)}
+
+.main{min-width:0; display:flex; flex-direction:column}
+.topbar{position:sticky; top:0; z-index:20; background:color-mix(in srgb,var(--page) 84%,transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--hairline); display:flex; align-items:center; gap:16px; padding:16px 32px}
+.topbar h1{font-size:21px; font-weight:700}
+.topbar-r{margin-left:auto; display:flex; align-items:center; gap:10px}
+.pill{display:inline-flex; align-items:center; gap:8px; padding:9px 15px; border-radius:100px; background:var(--blue-soft); color:var(--blue-strong); font-size:12.5px; font-weight:600}
+.pill i{width:7px; height:7px; border-radius:50%; background:var(--blue)}
+.icon-btn{width:38px; height:38px; display:grid; place-items:center; border-radius:10px; border:1px solid var(--hairline-2); background:var(--surface); color:var(--secondary); transition:.14s}
+.icon-btn:hover{color:var(--ink); border-color:var(--blue)} .icon-btn svg{width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8}
+.menu-btn{display:none}
+.content{padding:26px 32px 64px; max-width:1260px; width:100%}
+.page{display:none} .page.active{display:block; animation:f .35s ease}
+@keyframes f{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+.sec{margin:40px 0 16px} .sec:first-child{margin-top:6px}
+.sec .eyebrow{display:block; margin-bottom:7px} .sec h2{font-size:19px; font-weight:700} .sec .hint{font-size:12.5px; color:var(--muted); margin-top:4px}
+.grid{display:grid; gap:16px} .two{grid-template-columns:1fr 1fr}
+.card{background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r); padding:20px; box-shadow:var(--shadow)}
+.card-t{font-size:14px; font-weight:700} .card-s{font-size:12px; color:var(--muted); margin:4px 0 15px}
+
+.hero{position:relative; overflow:hidden; background:radial-gradient(130% 120% at 100% 0%, var(--blue-soft), transparent 60%), var(--surface); border:1px solid var(--hairline); border-radius:var(--r); padding:32px 30px; box-shadow:var(--shadow-lg)}
+.hero .ghost{position:absolute; right:-8px; top:-24px; font-size:200px; font-weight:700; line-height:1; letter-spacing:-.04em; color:var(--blue); opacity:.06; pointer-events:none; font-variant-numeric:tabular-nums; user-select:none}
+.hero-in{position:relative; z-index:1}
+.hero h2{font-size:clamp(28px,4.2vw,44px); font-weight:700; line-height:1.06; letter-spacing:-.03em; margin-top:12px}
+.hero h2 .hl{color:var(--blue-ink)} .hero .lede{color:var(--secondary); font-size:14.5px; margin-top:16px; max-width:64ch; line-height:1.6} .hero .lede b{color:var(--ink); font-weight:600}
+.kpis{grid-template-columns:repeat(4,1fr); margin-top:16px}
+.kpi{background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r); padding:18px; box-shadow:var(--shadow); position:relative; overflow:hidden}
+.kpi::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--blue)} .kpi.hot::before{background:var(--orange)}
+.kpi .kl{font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin-bottom:11px} .kpi.hot .kl{color:var(--orange-ink)}
+.kpi .kv{font-size:29px; font-weight:700; line-height:1; letter-spacing:-.025em} .kpi .kv small{font-size:15px; color:var(--secondary); font-weight:600}
+.kpi .kf{margin-top:10px; font-size:11.5px; color:var(--muted)}
+
+/* comparison delta cards */
+.dcards{grid-template-columns:repeat(3,1fr)}
+.dcard{background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow)}
+.dcard .dl{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.dcard .dv{font-size:30px; font-weight:700; letter-spacing:-.025em; margin-top:10px; line-height:1} .dcard .dv small{font-size:16px; color:var(--secondary); font-weight:600}
+.dcard .dr{margin-top:10px; font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px}
+.delta{display:inline-flex; align-items:center; gap:3px; font-weight:700; font-variant-numeric:tabular-nums; font-size:12.5px; padding:2px 8px; border-radius:100px}
+.delta.up{color:var(--good-ink); background:var(--good-soft)} .delta.down{color:var(--crit-ink); background:var(--crit-soft)} .delta.flat{color:var(--muted); background:var(--surface-3)}
+.delta svg{width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.6}
+.delta.mini{padding:1px 6px; font-size:11px}
+
+.cw{position:relative}
+svg text{fill:var(--muted); font-family:"DM Sans",sans-serif; font-size:10px}
+.tooltip{position:fixed; pointer-events:none; z-index:60; opacity:0; transition:opacity .12s; background:var(--surface); border:1px solid var(--hairline-2); border-radius:11px; box-shadow:var(--shadow-lg); padding:10px 12px; font-size:12px; min-width:150px; transform:translate(-50%,-116%)}
+.tooltip .tt-t{font-weight:700; font-size:12px; margin-bottom:6px} .tooltip .tt-r{display:flex; justify-content:space-between; gap:16px; color:var(--secondary); padding:1px 0} .tooltip .tt-r b{color:var(--ink); font-variant-numeric:tabular-nums; font-weight:600}
+.bars{display:flex; flex-direction:column; gap:12px}
+.bar{display:grid; grid-template-columns:132px 1fr auto; align-items:center; gap:13px}
+.bar .bl{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:500} .bar .sw{width:9px; height:9px; border-radius:2px; flex:0 0 auto}
+.bar .trk{height:20px; background:var(--surface-3); border-radius:6px; overflow:hidden} .bar .fl{height:100%; border-radius:6px; width:0; transition:width .9s cubic-bezier(.22,1,.36,1)}
+.bar .bv{font-size:12.5px; font-weight:700; min-width:60px; text-align:right; font-variant-numeric:tabular-nums} .bar .bs{font-size:11px; color:var(--muted); font-weight:500}
+
+.trow{display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; align-items:center; padding:12px 2px; border-top:1px solid var(--hairline)} .trow:first-child{border-top:0}
+.trow .lb{font-size:12.5px; color:var(--secondary)} .trow .vv{text-align:right; font-variant-numeric:tabular-nums; font-weight:600; font-size:13px}
+.trow .hd{font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:right} .trow .hd:first-child{text-align:left}
+
+.ins{display:flex; gap:14px; padding:14px 2px; border-top:1px solid var(--hairline)} .ins:first-child{border-top:0}
+.ins .mk{width:28px; height:28px; border-radius:9px; flex:0 0 auto; display:grid; place-items:center; background:var(--blue-soft); color:var(--blue-strong)}
+.ins.win .mk{background:var(--good-soft); color:var(--good-ink)} .ins.risk .mk{background:var(--orange-soft); color:var(--orange-ink)}
+.ins .mk svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9} .ins .ib{font-size:13.5px; line-height:1.55} .ins .ib b{font-weight:700}
+.post{display:grid; grid-template-columns:auto 1fr auto; gap:15px; align-items:center; padding:14px 2px; border-top:1px solid var(--hairline)} .post:first-child{border-top:0}
+.post .pr{font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; width:58px; text-align:center; color:var(--good-ink)}
+.post .pt{font-size:13px; line-height:1.4; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+.post .pm{font-size:11.5px; color:var(--muted); margin-top:6px; display:flex; gap:9px; align-items:center; font-weight:500} .post .pm .sw{width:8px;height:8px;border-radius:2px}
+.post .pn{text-align:right; font-size:11.5px; color:var(--secondary); font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:500}
+
+.tblwrap{overflow-x:auto}
+.tbl{width:100%; border-collapse:collapse; font-size:12.5px; min-width:640px}
+.tbl th{text-align:right; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); padding:0 11px 11px; border-bottom:1px solid var(--hairline-2); white-space:nowrap}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{padding:11px; border-bottom:1px solid var(--hairline); text-align:right; font-variant-numeric:tabular-nums; font-weight:500} .tbl tr:last-child td{border-bottom:0} .tbl tr:hover td{background:var(--surface-2)}
+.tbl .nm{display:flex; align-items:center; gap:9px; font-weight:600} .tbl .sw{width:9px;height:9px;border-radius:2px; flex:0 0 auto}
+.tbl .cell{display:flex; flex-direction:column; align-items:flex-end; gap:3px} .tbl .cell .cd{font-size:10.5px; white-space:nowrap} .tbl .cabs{color:var(--muted); font-weight:600}
+.chip{display:inline-block; padding:2px 9px; border-radius:100px; font-weight:700; font-size:11.5px}
+.chip.g{background:var(--good-soft); color:var(--good-ink)} .chip.m{background:var(--surface-3); color:var(--secondary)} .chip.l{background:var(--crit-soft); color:var(--crit-ink)}
+.dc{display:inline-flex; align-items:center; gap:2px; font-weight:700} .dc.up{color:var(--good-ink)} .dc.down{color:var(--crit-ink)} .dc.flat{color:var(--muted)}
+.tbl td.wk-hi{color:var(--good-ink); font-weight:700} .tbl td.wk-lo{color:var(--muted)}
+.tbl tr.wk-cur td{background:var(--blue-soft)}
+
+.vs-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px} .vs-nm{display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px}
+.sline{display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid var(--hairline); font-size:12.5px} .sline:first-of-type{border-top:0} .sline .sl{color:var(--secondary)} .sline b{font-variant-numeric:tabular-nums; font-weight:600}
+.note{font-size:11.5px; line-height:1.65; color:var(--secondary); margin-top:14px; padding:12px 14px; background:var(--surface-2); border-left:3px solid var(--blue); border-radius:0 9px 9px 0} .note.o{border-left-color:var(--orange)} .note b{color:var(--ink); font-weight:700}
+.heat{overflow-x:auto} .heat table{border-collapse:separate; border-spacing:5px; min-width:540px}
+.heat th{font-size:10px; color:var(--muted); font-weight:600; padding:2px} .heat th.rh{text-align:right; padding-right:8px}
+.heat td{width:66px; height:38px; border-radius:9px; text-align:center; font-size:12.5px; font-weight:700; font-variant-numeric:tabular-nums} .heat td.e{background:var(--surface-3); color:var(--muted); font-weight:400}
+.leg{display:flex; align-items:center; gap:8px; margin-top:13px; font-size:11px; color:var(--muted); font-weight:500} .leg .rmp{display:flex; gap:2px} .leg .rmp i{width:22px;height:9px;border-radius:2px;display:block}
+.mini{display:flex; flex-wrap:wrap; gap:22px} .mini .m{flex:1; min-width:120px} .mini .mv{font-size:24px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.02em} .mini .mv small{font-size:14px;color:var(--secondary)} .mini .ml{font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-top:5px}
+.foot{margin-top:44px; padding-top:18px; border-top:1px solid var(--hairline); font-size:11.5px; line-height:1.75; color:var(--muted)} .foot b{color:var(--secondary)}
+.ask-box{display:flex; align-items:center; gap:11px; background:var(--surface); border:1px solid var(--hairline-2); border-radius:14px; padding:2px 16px; box-shadow:var(--shadow); max-width:700px}
+.ask-box:focus-within{border-color:var(--blue)}
+.ask-box .ask-ic{width:20px; height:20px; stroke:var(--muted); fill:none; stroke-width:2; flex:0 0 auto}
+.ask-box input{flex:1; border:0; background:transparent; color:var(--ink); font-family:inherit; font-size:16px; padding:15px 0; outline:none}
+.ask-chips{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 4px; max-width:860px}
+.ask-chip{font-family:inherit; font-size:12.5px; color:var(--secondary); background:var(--surface-2); border:1px solid var(--hairline); border-radius:100px; padding:7px 13px; cursor:pointer; transition:.14s}
+.ask-chip:hover{border-color:var(--blue); color:var(--blue-strong); background:var(--blue-soft)}
+.ask-card{margin-top:20px; max-width:700px; animation:f .3s ease}
+.ask-card .ask-q{font-size:12.5px; color:var(--muted); margin-bottom:12px}
+.ask-card .ask-val{font-size:clamp(30px,5vw,42px); font-weight:700; letter-spacing:-.025em; line-height:1.05; color:var(--ink)}
+.ask-card .ask-scope{font-size:14.5px; color:var(--secondary); font-weight:600; margin-top:11px}
+.ask-card .ask-note{font-size:11.5px; color:var(--muted); margin-top:9px}
+.ask-card .ask-extra{display:inline-block; font-size:13.5px; font-weight:700; margin-top:12px; padding:4px 11px; border-radius:100px; background:var(--blue-soft); color:var(--blue-strong)}
+.ask-card.miss .ask-miss{font-size:13.5px; color:var(--secondary); line-height:1.55}
+.ask-top{display:flex; align-items:center; gap:7px; background:var(--surface-2); border:1px solid var(--hairline-2); border-radius:100px; padding:7px 13px}
+.ask-top svg{width:15px; height:15px; stroke:var(--muted); fill:none; stroke-width:2; flex:0 0 auto}
+.ask-top input{border:0; background:transparent; color:var(--ink); font-family:inherit; font-size:13px; outline:none; width:150px}
+@media (max-width:820px){.ask-top{display:none}}
+.ptools{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap}
+.ptools input,.ptools select{font-family:inherit; font-size:13px; padding:9px 12px; border:1px solid var(--hairline-2); border-radius:10px; background:var(--surface); color:var(--ink)}
+.ptools input{min-width:260px} .ptools input:focus,.ptools select:focus{outline:none; border-color:var(--blue)}
+.ptools .pcount{margin-left:auto; font-size:12px; color:var(--muted); font-weight:600; font-variant-numeric:tabular-nums}
+.pwrap{overflow:auto; max-height:74vh; border:1px solid var(--hairline); border-radius:var(--r); box-shadow:var(--shadow)}
+.ptable{border-collapse:separate; border-spacing:0; font-size:12px; min-width:1500px; width:100%; background:var(--surface)}
+.ptable th{position:sticky; top:0; z-index:2; background:var(--surface-2); font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); padding:11px 12px; border-bottom:1px solid var(--hairline-2); white-space:nowrap; cursor:pointer; user-select:none}
+.ptable th.r{text-align:right} .ptable th.l{text-align:left} .ptable th:hover{color:var(--ink)}
+.ptable td{padding:9px 12px; border-bottom:1px solid var(--hairline); white-space:nowrap; font-variant-numeric:tabular-nums; color:var(--ink)}
+.ptable td.r{text-align:right} .ptable td.l{text-align:left}
+.ptable tbody tr:hover td{background:var(--surface-2)}
+.ptable td.nmc{max-width:340px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--secondary)}
+.ptable td .nm{display:flex; align-items:center; gap:7px; font-weight:500} .ptable td .nm .sw{width:8px;height:8px;border-radius:2px;flex:0 0 auto}
+.ptable a{color:var(--blue-ink); font-weight:700; text-decoration:none} .ptable a:hover{text-decoration:underline}
+.ptable .sar{color:var(--blue-strong)}
+.ptable td.z{color:var(--muted)}
+.movers{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mv-card{padding:16px;border:1px solid var(--hairline);border-radius:var(--r);background:var(--surface-2)}
+.mv-card .mvh{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.mv-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:12.5px} .mv-item .mvn{display:flex;align-items:center;gap:8px;font-weight:500} .mv-item .sw{width:8px;height:8px;border-radius:2px}
+
+.pstat{display:flex; flex-wrap:wrap; gap:22px; margin:14px 0 4px}
+.pstat .sv{font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1} .pstat .sl{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; font-weight:600; margin-top:5px}
+.pstat .sv.hot{color:var(--good-ink)}
+.pquote{font-size:14.5px; line-height:1.55; color:var(--ink); border-left:3px solid var(--blue); padding:3px 0 3px 15px; margin:2px 0 4px; font-weight:500}
+.pwhy{font-size:12.5px; color:var(--secondary); line-height:1.55} .pwhy b{color:var(--ink)}
+.ptag{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--orange-ink)}
+.post .pwl{font-size:12px; color:var(--muted); line-height:1.5; margin-top:6px}
+.cins{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+.cic{padding:18px; border:1px solid var(--hairline); border-radius:var(--r); background:var(--surface); box-shadow:var(--shadow)}
+.cic .cih{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px} .cic .cinm{display:flex; align-items:center; gap:9px; font-weight:700; font-size:13.5px} .cic .cinm .sw{width:9px;height:9px;border-radius:2px}
+.cic .cistat{display:flex; flex-wrap:wrap; gap:16px; padding:12px 0; border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline); margin-bottom:12px}
+.cic .cistat .v{font-weight:700; font-variant-numeric:tabular-nums; font-size:15px; line-height:1} .cic .cistat .l{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; font-weight:600; margin-top:4px}
+.cic .bl2{font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--orange-ink); margin-bottom:6px}
+.cic .q{color:var(--ink); font-weight:500; font-size:12.5px; line-height:1.45}
+.cic .cinums{font-size:11px; color:var(--muted); margin-top:7px; line-height:1.5; font-variant-numeric:tabular-nums}
+.cic .cidiag{margin-top:12px; font-size:12px; color:var(--secondary); line-height:1.5; padding-top:12px; border-top:1px solid var(--hairline)} .cic .cidiag b{color:var(--ink)}
+@media (max-width:980px){
+  .app{grid-template-columns:1fr}
+  .cins{grid-template-columns:1fr}
+  .sidebar{position:fixed; z-index:60; width:250px; transform:translateX(-100%); transition:transform .25s; box-shadow:var(--shadow-lg)} .sidebar.open{transform:none}
+  .menu-btn{display:grid} .kpis{grid-template-columns:repeat(2,1fr)} .two,.dcards,.movers{grid-template-columns:1fr}
+  .content{padding:20px 16px 54px} .topbar{padding:14px 16px} .hero .ghost{font-size:120px}
+  .scrim{position:fixed; inset:0; background:rgba(10,20,40,.4); z-index:55}
+}
+@media (max-width:560px){ .kpis,.trow{grid-template-columns:1fr} }
+@media (min-width:981px){.scrim{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="1.5" y="1.5" width="29" height="29" rx="8" fill="none" stroke="var(--hairline-2)" stroke-width="1.4"/><circle cx="16" cy="16" r="8" fill="none" stroke="var(--blue)" stroke-width="2.2"/><circle cx="16" cy="16" r="2.6" fill="var(--orange)"/></svg>
+      <div class="brand-txt"><span class="b">Social</span><span>Pulse</span><small>Social Analytics</small></div>
+    </div>
+    <nav class="nav" id="nav" aria-label="Report sections">
+      <div class="nav-h">Ask</div>
+      <button class="nav-btn" data-page="ask"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.2-4.2"/></svg>Ask the data</button>
+      <div class="nav-h">Comparison</div>
+      <button class="nav-btn active" data-page="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Overview<span class="n" id="n-ov"></span></button>
+      <button class="nav-btn" data-page="weekly"><svg viewBox="0 0 24 24"><path d="M4 5h16v16H4zM4 9h16M9 3v4M15 3v4"/><path d="M8 14l2.5 2.5L16 12"/></svg>Weekly<span class="n">WoW</span></button>
+      <button class="nav-btn" data-page="monthly"><svg viewBox="0 0 24 24"><path d="M3 6l4-3 4 3 4-3 4 3v13l-4 3-4-3-4 3-4-3z"/><path d="M7 9v9M17 6v9"/></svg>Monthly<span class="n">MoM</span></button>
+      <div class="nav-h">Analysis</div>
+      <button class="nav-btn" data-page="platforms"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><rect x="4" y="11" width="4" height="7" rx="1"/><rect x="10" y="7" width="4" height="11" rx="1"/><rect x="16" y="13" width="4" height="5" rx="1"/></svg>Platforms<span class="n" id="n-pf"></span></button>
+      <button class="nav-btn" data-page="channels"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2.5 19a4.5 4.5 0 0 1 9 0M12.5 19a4.5 4.5 0 0 1 9 0"/></svg>Channels<span class="n" id="n-ch"></span></button>
+      <button class="nav-btn" data-page="hashtags"><svg viewBox="0 0 24 24"><path d="M9 3 7 21M17 3l-2 18M4 9h16M3 15h16"/></svg>Hashtags<span class="n" id="n-ht"></span></button>
+      <button class="nav-btn" data-page="timing"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Timing<span class="n">7×6</span></button>
+      <button class="nav-btn" data-page="posts"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 10h16M4 15h16M4 20h10"/></svg>All posts<span class="n" id="n-po"></span></button>
+      <div class="nav-h">Email · Kit</div>
+      <button class="nav-btn" data-page="email"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email<span class="n" id="n-em"></span></button>
+    </nav>
+    <div class="side-foot"><span class="tag-live"><i></i>SAMPLE DATA</span><div>Data window<br><b id="foot-range"></b></div><div style="margin-top:7px" id="foot-meta"></div></div>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <h1 id="ttTitle">Overview</h1>
+      <div class="topbar-r"><label class="ask-top" title="Ask the data"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.2-4.2"/></svg><input id="ask-top-in" placeholder="Ask the data…" autocomplete="off"></label><span class="pill"><i></i><span id="pill-range"></span></span>
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"><svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+    </header>
+    <div class="content">
+      <section class="page" data-page="ask"></section>
+      <section class="page active" data-page="overview"></section>
+      <section class="page" data-page="weekly"></section>
+      <section class="page" data-page="monthly"></section>
+      <section class="page" data-page="platforms"></section>
+      <section class="page" data-page="channels"></section>
+      <section class="page" data-page="hashtags"></section>
+      <section class="page" data-page="timing"></section>
+      <section class="page" data-page="posts"></section>
+      <section class="page" data-page="email"></section>
+    </div>
+  </div>
+</div>
+<div class="tooltip" id="tt"></div>
+
+<script>
+"use strict";
+const DATA=__DATA__;
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const EMAIL=__EMAIL__;
+const PCOL={LinkedIn:'--s-linkedin',YouTube:'--s-youtube',TikTok:'--s-tiktok',Instagram:'--s-instagram','Twitter/X':'--s-twitter',Facebook:'--s-facebook'};
+const sw=p=>`<span class="sw" style="background:${css(PCOL[p]||'--blue')}"></span>`;
+const UP='<svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5"/></svg>', DN='<svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg>';
+function pctDelta(now,prev){ if(!prev) return now?{t:'new',c:'up'}:{t:'—',c:'flat'}; const d=(now-prev)/prev*100; return {t:(d>=0?'+':'')+Math.round(d)+'%',c:d>0.5?'up':d<-0.5?'down':'flat',v:d}; }
+function ppDelta(now,prev){ const d=now-prev; return {t:(d>=0?'+':'')+d.toFixed(1)+'pp',c:d>0.05?'up':d<-0.05?'down':'flat',v:d}; }
+function absDelta(now,prev){ const d=now-prev; return (d>=0?'+':'−')+fmt(Math.abs(d)); }
+function deltaChip(d,mini){ const ar=d.c==='up'?UP:d.c==='down'?DN:''; return `<span class="delta ${d.c}${mini?' mini':''}">${ar}${d.t}</span>`; }
+function dcInline(d){ const ar=d.c==='up'?'▲':d.c==='down'?'▼':'·'; return `<span class="dc ${d.c}">${ar} ${d.t}</span>`; }
+const chip=r=>`<span class="chip ${r>=3?'g':r>=1.5?'m':'l'}">${r.toFixed(1)}%</span>`;
+
+/* ---- charts ---- */
+function line(el,rows,key,keyfmt){
+  const W=560,H=210,pad={l:46,r:16,t:16,b:30};
+  const vals=rows.map(d=>d[key]),max=Math.max(...vals)*1.12,min=key==='rate'?Math.max(0,Math.min(...vals)*0.7):0;
+  const iw=W-pad.l-pad.r,ih=H-pad.t-pad.b, n=rows.length;
+  const x=i=>pad.l+(i/(n-1))*iw, y=v=>pad.t+ih-((v-min)/(max-min||1))*ih;
+  const pts=rows.map((d,i)=>[x(i),y(d[key])]);
+  const p=pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ');
+  const area=`M${pts[0][0]} ${pad.t+ih} `+pts.map(q=>'L'+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ')+` L${pts.at(-1)[0]} ${pad.t+ih} Z`;
+  const ac=css('--blue'); let gy='';
+  for(let i=0;i<=4;i++){const v=min+(max-min)*i/4,yy=y(v); gy+=`<line x1="${pad.l}" y1="${yy.toFixed(1)}" x2="${W-pad.r}" y2="${yy.toFixed(1)}" stroke="${css('--grid')}"/><text x="${pad.l-8}" y="${yy+3.5}" text-anchor="end">${keyfmt(v)}</text>`;}
+  let gx=''; rows.forEach((d,i)=>{if(i%2===0||i===n-1)gx+=`<text x="${x(i)}" y="${H-10}" text-anchor="middle">${d.label}</text>`;});
+  const dots=pts.map((q,i)=>i===n-1?`<circle cx="${q[0]}" cy="${q[1]}" r="7" fill="${ac}" opacity=".16"/><circle cx="${q[0]}" cy="${q[1]}" r="4" fill="${ac}" stroke="${css('--surface')}" stroke-width="2"/>`:'').join('');
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="lg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${ac}" stop-opacity=".20"/><stop offset="1" stop-color="${ac}" stop-opacity="0"/></linearGradient></defs>${gy}${gx}<path d="${area}" fill="url(#lg)"/><path class="ln" d="${p}" fill="none" stroke="${ac}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>${dots}<line id="cxl" y1="${pad.t}" y2="${pad.t+ih}" stroke="${ac}" stroke-width="1" opacity="0"/><circle id="cdl" r="5" fill="${ac}" stroke="${css('--surface')}" stroke-width="2" opacity="0"/><rect id="htl" x="${pad.l}" y="${pad.t}" width="${iw}" height="${ih}" fill="transparent"/></svg>`;
+  const ln=el.querySelector('.ln'); if(ln&&!rm){const L=ln.getTotalLength(); ln.style.strokeDasharray=L; ln.style.strokeDashoffset=L; ln.getBoundingClientRect(); ln.style.transition='stroke-dashoffset 1.1s ease'; ln.style.strokeDashoffset=0;}
+  const svg=el.querySelector('svg'),ht=el.querySelector('#htl'),cx=el.querySelector('#cxl'),cd=el.querySelector('#cdl'),tt=$('#tt');
+  ht.addEventListener('mousemove',e=>{const r=svg.getBoundingClientRect(),sx=(e.clientX-r.left)/r.width*W;let i=Math.round((sx-pad.l)/iw*(n-1));i=Math.max(0,Math.min(n-1,i));const d=rows[i],px=x(i),py=y(d[key]);
+    cx.setAttribute('x1',px);cx.setAttribute('x2',px);cx.setAttribute('opacity','.45');cd.setAttribute('cx',px);cd.setAttribute('cy',py);cd.setAttribute('opacity','1');
+    tt.style.left=(r.left+px/W*r.width)+'px';tt.style.top=(r.top+py/H*r.height)+'px';tt.style.opacity='1';
+    tt.innerHTML=`<div class="tt-t">${d.label}</div><div class="tt-r">Impressions <b>${fmt(d.impressions)}</b></div><div class="tt-r">Engagement <b>${fmt(d.engagement)}</b></div><div class="tt-r">Eng. rate <b>${d.rate.toFixed(1)}%</b></div><div class="tt-r">Posts <b>${d.posts}</b></div>`;});
+  ht.addEventListener('mouseleave',()=>{cx.setAttribute('opacity','0');cd.setAttribute('opacity','0');tt.style.opacity='0';});
+}
+function bars(el,rows,{max,fmtVal,suffix}={}){
+  const mx=max||Math.max(...rows.map(r=>r.value))||1;
+  el.innerHTML=rows.map(r=>{const w=(r.value/mx*100).toFixed(1),v=fmtVal?fmtVal(r):fmt(r.value);
+    return `<div class="bar"><div class="bl">${r.color?`<span class="sw" style="background:${r.color}"></span>`:''}${r.label}</div><div class="trk"><div class="fl" data-w="${w}" style="background:${r.color||css('--blue')}"></div></div><div class="bv">${v}${suffix||r.suffix||''} ${r.sub?`<span class="bs">${r.sub}</span>`:''}</div></div>`;}).join('');
+  requestAnimationFrame(()=>$$('.fl',el).forEach(f=>f.style.width=f.dataset.w+'%'));
+}
+
+/* ---- comparison table (totals+platform+channel) ---- */
+function cmpTable(el,rows){
+  // rows: [{name,platform?,now,prev}]
+  const mCols=[['posts','Posts',false],['impressions','Impr',false],['reach','Reach',false],['engagement','Eng',false],['rate','Eng rate',true],['clicks','Clicks',false]];
+  let h='<div class="tblwrap"><table class="tbl"><thead><tr><th>'+(rows[0].platform!==undefined?'Channel':'Platform')+'</th>'+mCols.map(c=>`<th>${c[1]}</th>`).join('')+'</tr></thead><tbody>';
+  rows.forEach(r=>{
+    h+='<tr><td><span class="nm">'+sw(r.platform||r.name)+r.name+'</span></td>';
+    mCols.forEach(([k,,isRate])=>{
+      const now=r.now[k], prev=r.prev[k];
+      if(k==='reach' && now===0 && prev===0){ h+='<td><span style="color:var(--muted)">—</span></td>'; return; }
+      const val=isRate?now.toFixed(1)+'%':fmt(now);
+      const d=isRate?ppDelta(now,prev):pctDelta(now,prev);
+      const neutral=(k==='posts');
+      let cd;
+      if(isRate){ cd=dcInline(d); }
+      else if(neutral){ cd=`<span class="dc flat">${absDelta(now,prev)}</span>`; }
+      else { cd=`${dcInline(d)} <span class="cabs">${absDelta(now,prev)}</span>`; }
+      h+=`<td><div class="cell"><span>${val}</span><span class="cd">${cd}</span></div></td>`;
+    });
+    h+='</tr>';
+  });
+  el.innerHTML=h+'</tbody></table></div>';
+}
+function totalsCards(el,now,prev,partialNote){
+  const defs=[['impressions','Impressions',false],['engagement','Engagement',false],['rate','Engagement rate',true],['reach','Reach',false],['posts','Posts',false],['clicks','Clicks',false]];
+  el.innerHTML=defs.map(([k,lab,isRate])=>{
+    const d=isRate?ppDelta(now[k],prev[k]):pctDelta(now[k],prev[k]);
+    const val=isRate?now[k].toFixed(1)+'<small>%</small>':fmt(now[k]);
+    const pv=isRate?prev[k].toFixed(1)+'%':fmt(prev[k]);
+    const ad=isRate?'':`<b class="tnum" style="color:var(--ink)">${absDelta(now[k],prev[k])}</b>`;
+    return `<div class="dcard"><div class="dl">${lab}</div><div class="dv tnum">${val}</div><div class="dr">${deltaChip(d)} ${ad} <span>vs ${pv} prior</span></div></div>`;
+  }).join('');
+}
+
+/* ---- insights (derived) ---- */
+function buildInsights(){
+  const ch=DATA.channels_full, tot=DATA.overall;
+  const big=[...ch].sort((a,b)=>b.impressions-a.impressions)[0];
+  const share=Math.round(big.impressions/tot.impressions*100);
+  const strong=[...ch].filter(c=>c.posts>=10).sort((a,b)=>b.rate-a.rate)[0];
+  const weak=[...ch].filter(c=>c.posts>=20).sort((a,b)=>a.rate-b.rate)[0];
+  const mNow=DATA.monthly.at(-1), mPrev=DATA.monthly.at(-2);
+  const rateDir=mNow.rate>=mPrev.rate;
+  const bestDay=[...DATA.dow].filter(d=>d.posts>=10).sort((a,b)=>b.rate-a.rate)[0];
+  const bestDp=[...DATA.daypart].filter(d=>d.posts>=10).sort((a,b)=>b.rate-a.rate)[0];
+  const out=[];
+  out.push({k:'win',t:`<b>${strong.name} is your strongest channel</b> — ${strong.rate.toFixed(1)}% engagement across ${strong.posts} posts${strong.ctr>1?`, and it drives real clicks (${strong.ctr.toFixed(1)}% CTR)`:''}. This is where the audience actually responds.`});
+  out.push({k:'',t:`<b>One channel carries reach:</b> ${big.name} generates ${share}% of all impressions (${fmt(big.impressions)}), at a ${big.rate.toFixed(1)}% rate — the volume engine, distinct from the highest-efficiency channels.`});
+  out.push({k: rateDir?'win':'risk', t:`<b>${mNow.label} engagement rate ${rateDir?'rose':'slipped'} to ${mNow.rate.toFixed(1)}%</b> (from ${mPrev.rate.toFixed(1)}% in ${mPrev.label})${!rateDir?` even as posting volume ${mNow.posts>=mPrev.posts?'rose to '+mNow.posts:'held near '+mNow.posts} — more posts, thinner engagement.`:'.'}`});
+  out.push({k:'risk',t:`<b>${weak.name} is the weak link:</b> ${weak.posts} posts at just ${weak.rate.toFixed(1)}% — high effort, low return. A candidate to rethink cadence or repurpose.`});
+  if(bestDay&&bestDp) out.push({k:'',t:`<b>Timing edge:</b> ${bestDay.t} and the ${bestDp.t} window land the strongest engagement rates (${bestDay.rate.toFixed(1)}% / ${bestDp.rate.toFixed(1)}%). Worth concentrating priority posts there.`});
+  return out;
+}
+
+/* ---- heatmap color (brand blue ramp) ---- */
+function heatColor(v){
+  const dark=document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme:dark)').matches);
+  const st=dark?['#132131','#163350','#164a78','#1560a5','#2c93ff','#5aabff','#8cc6ff']:['#eaf3ff','#c9e2ff','#9ccaff','#5aabff','#2c93ff','#1372dc','#0a53a8'];
+  const lo=0.4,hi=3.0,t=Math.max(0,Math.min(1,(v-lo)/(hi-lo)));return st[Math.round(t*(st.length-1))];
+}
+
+/* =============== PAGE RENDERERS =============== */
+function pOverview(el){
+  const o=DATA.overall;
+  el.innerHTML=`
+  <div class="hero"><div class="ghost tnum">${o.rate.toFixed(1)}%</div><div class="hero-in">
+    <span class="eyebrow">${DATA.meta.date_min} – ${DATA.meta.date_max} · ${DATA.meta.weeks.length} weeks</span>
+    <h2><span class="hl tnum">${fmt(o.impressions)}</span> impressions</h2>
+    <div class="lede">Across the window, <b>${o.posts} posts</b> on <b>${DATA.meta.n_channels} channels</b> and <b>${DATA.meta.n_platforms} platforms</b> drove <b>${fmt(o.engagement)} engagements</b> and <b>${fmt(o.clicks)} clicks</b> — a <b>${o.rate.toFixed(1)}%</b> engagement rate. Reach reads ${fmt(o.reach)} where platforms report it.</div>
+  </div></div>
+  <div class="grid kpis">
+    <div class="kpi"><div class="kl">Posts</div><div class="kv tnum">${fmt(o.posts)}</div><div class="kf">${DATA.meta.n_channels} channels · ${DATA.meta.n_platforms} platforms</div></div>
+    <div class="kpi"><div class="kl">Impressions</div><div class="kv tnum">${fmt(o.impressions)}</div><div class="kf">${fmt(o.reach)} reach (partial)</div></div>
+    <div class="kpi"><div class="kl">Engagement</div><div class="kv tnum">${fmt(o.engagement)}</div><div class="kf">likes + comments + shares</div></div>
+    <div class="kpi hot"><div class="kl">Engagement rate</div><div class="kv tnum">${o.rate.toFixed(1)}<small>%</small></div><div class="kf">${fmt(o.clicks)} link clicks</div></div>
+  </div>
+  <div class="sec"><span class="eyebrow">Signal over time</span><h2>Weekly trend</h2><div class="hint">Impressions and engagement rate across ${DATA.meta.weeks.length} weeks · hover any point</div></div>
+  <div class="grid two"><div class="card"><div class="card-t">Impressions by week</div><div class="card-s">Full window, ${DATA.weekly[0].label}–${DATA.weekly.at(-1).label}</div><div class="cw" id="ov-c1"></div></div>
+  <div class="card"><div class="card-t">Engagement rate by week</div><div class="card-s">Weekly engagement ÷ impressions</div><div class="cw" id="ov-c2"></div></div></div>
+  <div class="sec"><span class="eyebrow">Mix</span><h2>Platform share</h2><div class="hint">Share of total impressions this window</div></div>
+  <div class="card"><div class="bars" id="ov-mix"></div></div>
+  <div class="sec"><span class="eyebrow">This week · ${DATA.insight_scope.label}</span><h2>Key insights</h2><div class="hint">Evidence-backed, from this week's posts only</div></div>
+  <div class="card"><div id="ov-ins"></div></div>
+  <div class="sec"><span class="eyebrow">Spotlight · this week</span><h2>Best-performing post of the week</h2><div class="hint">Week of ${DATA.insight_scope.range} · top post by engagement — with the likely reason</div></div>
+  <div class="card" id="ov-spot"></div>
+  <div class="sec"><span class="eyebrow">Top performers · this week</span><h2>Highest engagement-rate posts</h2><div class="hint">Week of ${DATA.insight_scope.range} · each with the likely reason it landed</div></div>
+  <div class="card" id="ov-top"></div>
+  <div class="foot" id="ov-foot"></div>`;
+  line($('#ov-c1'),DATA.weekly,'impressions',v=>v>=1000?(v/1000).toFixed(0)+'k':v.toFixed(0));
+  line($('#ov-c2'),DATA.weekly,'rate',v=>v.toFixed(1));
+  const tot=DATA.overall.impressions;
+  bars($('#ov-mix'),[...DATA.platforms_full].sort((a,b)=>b.impressions-a.impressions).map(p=>({label:p.name,color:css(PCOL[p.name]),value:p.impressions,fmtVal:r=>(r.value/tot*100).toFixed(0)+'%',sub:fmt(p.impressions)})),{max:tot});
+  $('#ov-ins').innerHTML=DATA.insights2.map(i=>{const ic=i.k==='win'?'<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>':i.k==='risk'?'<svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9 2 18a1.7 1.7 0 0 0 1.5 2.6h17A1.7 1.7 0 0 0 22 18L13.7 3.9a1.7 1.7 0 0 0-3 0z"/></svg>':'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>';return `<div class="ins ${i.k}"><div class="mk">${ic}</div><div class="ib">${i.t}</div></div>`;}).join('');
+  const s=DATA.spotlight;
+  $('#ov-spot').innerHTML=`<div class="pwhy" style="margin-bottom:9px"><span class="ptag">${s.plat} · ${s.chan} · ${s.type} · ${s.date}</span></div>
+    <div class="pquote">${s.txt}</div>
+    <div class="pstat">
+      <div><div class="sv tnum">${fmt(s.impr)}</div><div class="sl">Impressions</div></div>
+      ${s.paid?`<div><div class="sv tnum">${fmt(s.paid)}</div><div class="sl">Paid impressions</div></div>`:`<div><div class="sv tnum">0</div><div class="sl">Paid (organic)</div></div>`}
+      <div><div class="sv tnum">${fmt(s.eng)}</div><div class="sl">Engagements</div></div>
+      <div><div class="sv tnum hot">${s.er}%</div><div class="sl">Engagement rate</div></div>
+      <div><div class="sv tnum">${s.likes} / ${s.comments} / ${s.shares}</div><div class="sl">Likes / Comments / Shares</div></div>
+    </div>
+    <div class="pwhy"><b>Why it landed:</b> ${s.why} ${s.note?`<span style="color:var(--muted)">${s.note}</span>`:''}</div>`;
+  $('#ov-top').innerHTML=DATA.top_rate.map(p=>`<div class="post"><div class="pr">${p.er}%</div><div><div class="pt">${p.txt}</div><div class="pm">${sw(p.plat)}${p.chan} · ${p.type}</div><div class="pwl">${p.why}</div></div><div class="pn">${fmt(p.impr)} impr${p.paid?`<br>${fmt(p.paid)} paid`:''}<br>${fmt(p.eng)} eng</div></div>`).join('');
+  $('#ov-foot').innerHTML=`<b>Sample dashboard</b> built from synthetic data (${DATA.meta.date_min} – ${DATA.meta.date_max}, ${DATA.meta.n_posts} posts) for a fictional brand, Nimbus. Drop in a real weekly export to refresh it. Engagement rate = engagement ÷ impressions. Reach is shown only where a platform reports it.`;
+}
+function comparisonPage(el,cube,eyebrow,title,subtitle){
+  el.innerHTML=`
+  <div class="sec" style="margin-top:6px"><span class="eyebrow">${eyebrow}</span><h2>${title}</h2><div class="hint">${subtitle}</div></div>
+  <div class="grid dcards" id="cp-tot"></div>
+  <div class="sec"><span class="eyebrow">Movers</span><h2>Biggest shifts</h2><div class="hint">Channels with the largest change in engagement, this period vs last</div></div>
+  <div class="movers" id="cp-move"></div>
+  <div class="sec"><span class="eyebrow">By platform</span><h2>Platform comparison</h2><div class="hint">Every metric, this period vs last · ▲▼ = change on the current value</div></div>
+  <div class="card" id="cp-plat"></div>
+  <div class="sec"><span class="eyebrow">By channel</span><h2>Channel comparison</h2><div class="hint">All ${cube.channels.length} channels, this period vs last</div></div>
+  <div class="card" id="cp-chan"></div>`;
+  totalsCards($('#cp-tot',el),cube.totals.now,cube.totals.prev);
+  // movers by engagement % change (channels with enough base)
+  const movers=cube.channels.map(c=>({name:c.name,platform:c.platform,d:pctDelta(c.now.engagement,c.prev.engagement),base:Math.max(c.now.engagement,c.prev.engagement)})).filter(m=>m.base>=20&&isFinite(m.d.v));
+  const up=[...movers].filter(m=>m.d.v>0).sort((a,b)=>b.d.v-a.d.v).slice(0,4);
+  const dn=[...movers].filter(m=>m.d.v<0).sort((a,b)=>a.d.v-b.d.v).slice(0,4);
+  const mv=(title,arr)=>`<div class="mv-card"><div class="mvh">${title}</div>${arr.map(m=>`<div class="mv-item"><span class="mvn">${sw(m.platform)}${m.name}</span>${deltaChip(m.d,true)}</div>`).join('')||'<div class="mv-item" style="color:var(--muted)">—</div>'}</div>`;
+  $('#cp-move',el).innerHTML=mv('Gaining engagement',up)+mv('Losing engagement',dn);
+  cmpTable($('#cp-plat',el),cube.platforms.filter(p=>p.now.posts||p.prev.posts));
+  cmpTable($('#cp-chan',el),cube.channels);
+}
+function pWeekly(el){ const c=DATA.wow; comparisonPage(el,c,'Week on week',`${c.now} vs ${c.prev}`,`Week of ${c.now_label} vs week of ${c.prev_label} — totals, ${c.platforms.length} platforms, ${c.channels.length} channels`);
+  const wk=DATA.weekly, M=[['posts','Posts','int'],['impressions','Impressions','int'],['reach','Reach','int'],['engagement','Engagement','int'],['rate','Eng rate','pct'],['clicks','Clicks','int'],['ctr','CTR','pct']];
+  const ext={}; M.forEach(([k])=>{const v=wk.map(w=>w[k]); ext[k]={mx:Math.max(...v),mn:Math.min(...v)};});
+  const fv=(v,t)=>t==='pct'?v.toFixed(1)+'%':fmt(v);
+  const rows=[...wk].reverse();
+  let h=`<div class="sec"><span class="eyebrow">History</span><h2>Week-by-week snapshot</h2><div class="hint">All ${wk.length} weeks at a glance for anomaly checks — the peak in each column is marked ▲ and the low ▾, so spikes and dips stand out. Newest week first.</div></div>
+    <div class="card tblwrap"><table class="tbl"><thead><tr><th>Week</th>${M.map(m=>`<th>${m[1]}</th>`).join('')}</tr></thead><tbody>`+
+    rows.map((w,i)=>`<tr class="${i===0?'wk-cur':''}"><td><span class="nm">W${w.week.split('-W')[1]} <span style="color:var(--muted);font-weight:400">· ${w.label}</span>${i===0?' <span class="chip m">current</span>':''}</span></td>`+
+      M.map(([k,,t])=>{const v=w[k],hi=v===ext[k].mx,lo=v===ext[k].mn;return `<td class="${hi?'wk-hi':lo?'wk-lo':''}">${fv(v,t)}${hi?' ▲':lo?' ▾':''}</td>`;}).join('')+`</tr>`).join('')+
+    `</tbody></table><div class="note">Reads newest → oldest. ▲ = the highest week for that metric, ▾ = the lowest. The <b>current</b> week is still accumulating engagement, so a low Engagement / Eng-rate mark there is usually maturation, not a real dip.</div></div>`;
+  const w=document.createElement('div'); w.innerHTML=h; while(w.firstChild) el.appendChild(w.firstChild);
+}
+function pMonthly(el){ const c=DATA.mom; comparisonPage(el,c,'Month on month',`${c.now_label} vs ${c.prev_label}`,`${c.now_label} vs ${c.prev_label} — totals, ${c.platforms.length} platforms, ${c.channels.length} channels`);
+  if(c.note){ const n=document.createElement('div'); n.className='note o'; n.style.marginTop='16px'; n.innerHTML=`<b>Note:</b> ${c.note}`; el.appendChild(n);} }
+function pPlatforms(el){
+  el.innerHTML=`
+  <div class="sec" style="margin-top:6px"><span class="eyebrow">Platform performance</span><h2>Where reach comes from</h2><div class="hint">Full window · ${DATA.platforms_full.length} active platforms</div></div>
+  <div class="grid two"><div class="card"><div class="card-t">Impressions</div><div class="card-s">Total impressions by platform</div><div class="bars" id="pf-i"></div></div>
+  <div class="card"><div class="card-t">Engagement rate</div><div class="card-s">Engagement ÷ impressions</div><div class="bars" id="pf-r"></div></div></div>
+  <div class="sec"><span class="eyebrow">Detail</span><h2>Full breakdown</h2></div>
+  <div class="card tblwrap"><table class="tbl" id="pf-t"></table><div class="note"><b>Reach caveat:</b> only Instagram, TikTok and part of LinkedIn return reach — YouTube, Twitter/X and Facebook report none.</div></div>`;
+  bars($('#pf-i'),[...DATA.platforms_full].sort((a,b)=>b.impressions-a.impressions).map(p=>({label:p.name,color:css(PCOL[p.name]),value:p.impressions,sub:p.posts+' posts'})));
+  bars($('#pf-r'),[...DATA.platforms_full].sort((a,b)=>b.rate-a.rate).map(p=>({label:p.name,color:css(PCOL[p.name]),value:p.rate,fmtVal:r=>r.value.toFixed(1),suffix:'%'})),{max:3.2});
+  $('#pf-t').innerHTML=`<thead><tr><th>Platform</th><th>Posts</th><th>Impr</th><th>Eng</th><th>Reach</th><th>Clicks</th><th>Rate</th></tr></thead><tbody>`+[...DATA.platforms_full].sort((a,b)=>b.impressions-a.impressions).map(p=>`<tr><td><span class="nm">${sw(p.name)}${p.name}</span></td><td>${fmt(p.posts)}</td><td>${fmt(p.impressions)}</td><td>${fmt(p.engagement)}</td><td>${p.reach?fmt(p.reach):'—'}</td><td>${fmt(p.clicks)}</td><td>${chip(p.rate)}</td></tr>`).join('')+`</tbody>`;
+}
+function pChannels(el){
+  const byrate=[...DATA.channels_full].sort((a,b)=>b.rate-a.rate);
+  const get=n=>DATA.channels_full.find(c=>c.name===n)||{posts:0,impressions:0,engagement:0,reach:0,clicks:0,rate:0};
+  const sm=[...DATA.channels_full].sort((a,b)=>b.impressions-a.impressions)[0]||{posts:0,impressions:0,engagement:0,reach:0,clicks:0,rate:0,name:'—',platform:''};
+  const xl=[...DATA.channels_full].sort((a,b)=>b.posts-a.posts).find(c=>c.name!==sm.name)||{posts:0,impressions:0,engagement:0,reach:0,clicks:0,rate:0,name:'—',platform:''};
+  el.innerHTML=`
+  <div class="sec" style="margin-top:6px"><span class="eyebrow">Channel leaderboard</span><h2>Ranked by engagement rate</h2><div class="hint">All ${DATA.channels_full.length} channels</div></div>
+  <div class="card"><div class="bars" id="ch-r"></div></div>
+  <div class="sec"><span class="eyebrow">Priority deep-dive</span><h2>Reach engine vs. volume engine</h2><div class="hint">The highest-reach channel against the highest-volume one</div></div>
+  <div class="grid two">
+    <div class="card"><div class="vs-top"><div class="vs-nm">${sw(sm.platform)}${sm.name}</div>${chip(sm.rate)}</div>
+      <div class="sline"><span class="sl">Posts</span><b>${sm.posts}</b></div><div class="sline"><span class="sl">Impressions</span><b>${fmt(sm.impressions)}</b></div><div class="sline"><span class="sl">Engagement</span><b>${fmt(sm.engagement)}</b></div><div class="sline"><span class="sl">Reach</span><b>${sm.reach?fmt(sm.reach):'—'}</b></div>
+      <div class="note"><b>The reach engine:</b> ${Math.round(sm.impressions/DATA.overall.impressions*100)}% of all impressions — the volume driver, though its ${sm.rate.toFixed(1)}% rate isn't the highest, so reach and efficiency live on different channels.</div></div>
+    <div class="card"><div class="vs-top"><div class="vs-nm">${sw(xl.platform)}${xl.name}</div>${chip(xl.rate)}</div>
+      <div class="sline"><span class="sl">Posts</span><b>${xl.posts}</b></div><div class="sline"><span class="sl">Impressions</span><b>${fmt(xl.impressions)}</b></div><div class="sline"><span class="sl">Engagement</span><b>${fmt(xl.engagement)}</b></div><div class="sline"><span class="sl">Clicks</span><b>${fmt(xl.clicks)}</b></div>
+      <div class="note o"><b>Highest volume:</b> ${xl.posts} posts — the most of any channel — at a ${xl.rate.toFixed(1)}% rate. A cadence-vs-quality question worth watching.</div></div>
+  </div>
+  <div class="sec"><span class="eyebrow">Paid vs organic</span><h2>Paid spend, examined</h2><div class="hint">Paid = posts that report paid impressions (where a platform splits it out)</div></div>
+  <div class="grid two"><div class="card"><div class="card-t">Reach per post</div><div class="card-s">Impressions per post, paid vs organic</div><div class="bars" id="ch-pr"></div></div>
+  <div class="card"><div class="card-t">Engagement rate</div><div class="card-s">Does the bought reach convert?</div><div class="bars" id="ch-pe"></div></div></div>
+  <div class="sec"><span class="eyebrow">Channel readout · this week</span><h2>Every channel, this week</h2><div class="hint">Week of ${DATA.insight_scope.range} · this week's best post, numbers and diagnostic per channel — ranked by the week's engagement rate</div></div>
+  <div class="cins" id="ch-ins"></div>`;
+  bars($('#ch-r'),byrate.map(c=>({label:c.name.length>22?c.name.slice(0,21)+'…':c.name,color:css(PCOL[c.platform]),value:c.rate,fmtVal:r=>r.value.toFixed(1),suffix:'%',sub:fmt(c.impressions)})),{max:Math.max(...byrate.map(c=>c.rate))*1.05});
+  const pd=DATA.paid;
+  bars($('#ch-pr'),[{label:`Paid (${pd.Paid.posts})`,color:css('--s-linkedin'),value:pd.Paid.impr_per_post,fmtVal:r=>fmt(r.value),sub:'/post'},{label:`Organic (${pd.Organic.posts})`,color:css('--s-tiktok'),value:pd.Organic.impr_per_post,fmtVal:r=>fmt(r.value),sub:'/post'}]);
+  bars($('#ch-pe'),[{label:'Organic',color:css('--s-tiktok'),value:pd.Organic.rate,fmtVal:r=>r.value.toFixed(1),suffix:'%'},{label:'Paid',color:css('--s-linkedin'),value:pd.Paid.rate,fmtVal:r=>r.value.toFixed(1),suffix:'%'}],{max:Math.max(pd.Paid.rate,pd.Organic.rate)*1.2});
+  $('#ch-ins').innerHTML=[...DATA.channel_insights].sort((a,b)=>(b.posts>0)-(a.posts>0)||b.rate-a.rate).map(c=>{const b=c.best;
+    const stat=(v,l)=>`<div><div class="v tnum">${v}</div><div class="l">${l}</div></div>`;
+    const bestBlock = b ? `<div class="bl2">Best post · ${b.er}% · ${fmt(b.impr)} impr${b.paid?` · ${fmt(b.paid)} paid`:''}</div>
+      <div class="q">${b.txt}</div>
+      <div class="cinums">${fmt(b.eng)} eng · ${b.likes}L / ${b.comments}C / ${b.shares}S · ${b.type} · ${b.date}<br>${b.why}</div>` : `<div class="q" style="color:var(--muted)">No posts this week.</div>`;
+    return `<div class="cic"><div class="cih"><div class="cinm">${sw(c.platform)}${c.name}</div>${c.posts?chip(c.rate):'<span class="chip m">—</span>'}</div>
+      <div class="cistat">${stat(c.posts,'Posts')}${stat(fmt(c.impressions),'Impr')}${stat(fmt(c.engagement),'Eng')}${stat(c.rate+'%','Rate')}${c.ctr?stat(c.ctr+'%','CTR'):''}${c.paid?stat(fmt(c.paid),'Paid impr'):''}</div>
+      ${bestBlock}
+      <div class="cidiag"><b>Read:</b> ${c.diagnostic}</div></div>`;}).join('');
+}
+function pHashtags(el){
+  el.innerHTML=`<div class="sec" style="margin-top:6px"><span class="eyebrow">Hashtag analysis</span><h2>Frequency &amp; performance</h2><div class="hint">Top 15 of ${DATA.n_hashtags} unique tags · bar = uses, label = avg engagement rate</div></div>
+  <div class="card"><div class="bars" id="ht-b"></div></div>`;
+  bars($('#ht-b'),DATA.hashtags.map(h=>({label:h.t,value:h.u,sub:h.r.toFixed(1)+'%',color:css('--blue')})));
+}
+function pTiming(el){
+  el.innerHTML=`<div class="sec" style="margin-top:6px"><span class="eyebrow">Timing &amp; cadence</span><h2>When engagement happens</h2><div class="hint">Local account time · engagement rate by slot</div></div>
+  <div class="grid two"><div class="card"><div class="card-t">By time of day</div><div class="card-s">Engagement rate by daypart</div><div class="bars" id="tm-dp"></div></div>
+  <div class="card"><div class="card-t">By day of week</div><div class="card-s">Engagement rate by weekday</div><div class="bars" id="tm-dw"></div></div></div>
+  <div class="sec"><span class="eyebrow">Heatmap</span><h2>Day × time</h2><div class="hint">Engagement rate — darker blue is stronger · blank = no posts</div></div>
+  <div class="card"><div class="heat" id="tm-h"></div><div class="leg">Lower<span class="rmp" id="tm-r"></span>Higher engagement rate</div></div>`;
+  const mx=Math.max(...DATA.daypart.map(d=>d.rate),...DATA.dow.map(d=>d.rate))*1.1;
+  bars($('#tm-dp'),DATA.daypart.map(d=>({label:d.t,value:d.rate,fmtVal:r=>r.value.toFixed(1),suffix:'%',sub:d.posts+' posts',color:d.rate>=Math.max(...DATA.daypart.map(x=>x.rate))-1e-9?css('--orange'):css('--blue')})),{max:mx});
+  bars($('#tm-dw'),DATA.dow.map(d=>({label:d.t,value:d.rate,fmtVal:r=>r.value.toFixed(1),suffix:'%',sub:d.posts+' posts',color:d.rate>=Math.max(...DATA.dow.map(x=>x.rate))-1e-9?css('--orange'):css('--blue')})),{max:mx});
+  const H=DATA.heat; let h='<table><thead><tr><th></th>'+H.cols.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';
+  H.data.forEach((row,ri)=>{h+=`<tr><th class="rh">${H.rows[ri]}</th>`+row.map(v=>v===null?`<td class="e">·</td>`:`<td style="background:${heatColor(v)};color:${v>=2.0?'#fff':'var(--secondary)'}">${v.toFixed(1)}</td>`).join('')+'</tr>';});
+  $('#tm-h').innerHTML=h+'</tbody></table>';
+  $('#tm-r').innerHTML=[0.4,0.9,1.4,1.9,2.4,2.8,3.0].map(v=>`<i style="background:${heatColor(v)}"></i>`).join('');
+}
+
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function pPosts(el){
+  const cols=[{k:'d',l:'Date',t:'date'},{k:'t',l:'Time',t:'text'},{k:'nm',l:'Post name',t:'name'},{k:'ln',l:'Link',t:'link'},{k:'pr',l:'Profile',t:'text'},{k:'pl',l:'Platform',t:'plat'},{k:'im',l:'Impressions',t:'num'},{k:'er',l:'Eng rate',t:'rate'},{k:'en',l:'Engagement',t:'num'},{k:'io',l:'Impr organic',t:'num'},{k:'ip',l:'Impr paid',t:'num'},{k:'li',l:'Likes',t:'num'},{k:'di',l:'Dislikes',t:'num'},{k:'co',l:'Comments',t:'num'},{k:'sh',l:'Shares',t:'num'},{k:'rt',l:'Retweets',t:'num'},{k:'qu',l:'Quotes',t:'num'},{k:'eo',l:'Eng organic',t:'num'},{k:'ep',l:'Eng paid',t:'num'},{k:'ck',l:'Clicks',t:'num'},{k:'pv',l:'Plays',t:'num'}];
+  el.innerHTML=`<div class="sec" style="margin-top:6px"><span class="eyebrow">Post-level</span><h2>All posts</h2><div class="hint">All ${fmt(DATA.posts_table.length)} posts, newest first · search text or profile, filter by platform, click any column to sort</div></div>
+    <div class="ptools"><input id="pq" placeholder="Search post text or profile…"><select id="pf"><option value="">All platforms</option>${DATA.meta.platforms.map(p=>`<option>${p}</option>`).join('')}</select><span class="pcount" id="pcount"></span></div>
+    <div class="pwrap"><table class="ptable"><thead><tr id="phead"></tr></thead><tbody id="pbody"></tbody></table></div>
+    <div class="note" style="margin-top:14px"><b>Impressions</b> is the reliable total. <b>Impr organic / paid</b> are only split out by some platforms (Instagram, part of LinkedIn) — Facebook, TikTok, YouTube and Twitter/X report a single total, so their organic/paid columns read 0 by design. <b>Eng rate = engagement ÷ total impressions.</b> Times are as recorded in the export.</div>`;
+  let sortK='d', sortD=-1;
+  $('#phead',el).innerHTML=cols.map(c=>`<th data-k="${c.k}" data-t="${c.t}" class="${(c.t==='num'||c.t==='rate')?'r':'l'}">${c.l}<span class="sar"></span></th>`).join('');
+  function cell(r,c){const v=r[c.k];
+    if(c.t==='name') return `<td class="l nmc" title="${esc(v)}">${esc(v)}</td>`;
+    if(c.t==='link') return `<td class="l">${r.ln?`<a href="${esc(r.ln)}" target="_blank" rel="noopener">open ↗</a>`:'<span class="z">—</span>'}</td>`;
+    if(c.t==='plat') return `<td class="l"><span class="nm">${sw(v)}${v}</span></td>`;
+    if(c.t==='rate') return `<td class="r ${v===''||v==null?'z':''}">${v===''||v==null?'—':v+'%'}</td>`;
+    if(c.t==='num') return (v==null)?`<td class="r z">—</td>`:`<td class="r ${!v?'z':''}">${fmt(v)}</td>`;
+    return `<td class="l">${esc(v)}</td>`;}
+  function draw(){
+    const q=$('#pq',el).value.trim().toLowerCase(), pf=$('#pf',el).value;
+    let rows=DATA.posts_table.filter(r=>(!pf||r.pl===pf)&&(!q||(r.nm||'').toLowerCase().includes(q)||(r.pr||'').toLowerCase().includes(q)));
+    const sk=sortK==='d'?'ymd':sortK;
+    rows=[...rows].sort((a,b)=>{let x=a[sk],y=b[sk];const xn=(x===''||x==null),yn=(y===''||y==null);if(xn&&yn)return 0;if(xn)return 1;if(yn)return -1;
+      if(typeof x==='number'||typeof y==='number')return sortD*((+x||0)-(+y||0));return sortD*String(x).localeCompare(String(y));});
+    $('#pcount',el).textContent=`${fmt(rows.length)} of ${fmt(DATA.posts_table.length)} posts`;
+    $('#pbody',el).innerHTML=rows.map(r=>`<tr>${cols.map(c=>cell(r,c)).join('')}</tr>`).join('');
+    $$('#phead th',el).forEach(th=>th.querySelector('.sar').textContent=(th.dataset.k===sortK)?(sortD<0?' ↓':' ↑'):'');
+  }
+  $$('#phead th',el).forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;if(sortK===k)sortD=-sortD;else{sortK=k;sortD=(th.dataset.t==='text')?1:-1;}draw();}));
+  $('#pq',el).addEventListener('input',draw); $('#pf',el).addEventListener('change',draw);
+  draw();
+}
+function pEmail(el){
+  const E=EMAIL; let prop=E.current, mkey=E.data[prop].latest;
+  function render(){
+    const P=E.data[prop], m=P.byMonth[mkey], b=m.best;
+    const kpi=(lab,val,hot,sub)=>`<div class="kpi${hot?' hot':''}"><div class="kl">${lab}</div><div class="kv tnum">${val}</div><div class="kf">${sub||''}</div></div>`;
+    el.innerHTML=`
+      <div class="sec" style="margin-top:6px"><span class="eyebrow">Email · Kit (ConvertKit)</span><h2>${prop} newsletter</h2><div class="hint">Monthly email performance — ${m.label}</div></div>
+      <div class="ptools">${E.properties.length>1?`<select id="em-prop">${E.properties.map(p=>`<option ${p===prop?'selected':''}>${p}</option>`).join('')}</select>`:''}
+        <select id="em-month">${P.months.map(x=>`<option value="${x.key}" ${x.key===mkey?'selected':''}>${x.label}</option>`).join('')}</select>
+        <span class="pcount">${m.sent} email${m.sent!=1?'s':''} · ~${fmt(m.subscribers)} subscribers</span></div>
+      <div class="grid kpis">
+        ${kpi('Emails sent',m.sent,false,`~${fmt(m.subscribers)} subscribers`)}
+        ${kpi('Open rate',m.open_rate+'<small>%</small>',false,`${fmt(m.total_opened)} opens`)}
+        ${kpi('Click rate',m.click_rate+'<small>%</small>',true,`${fmt(m.total_clicked)} clicks · ${m.cto_rate}% click-to-open`)}
+        ${kpi('Unsub rate',m.unsub_rate+'<small>%</small>',false,`${fmt(m.total_unsub)} unsubscribes`)}
+      </div>
+      <div class="sec"><span class="eyebrow">Spotlight · this month</span><h2>Best-performing email</h2><div class="hint">Top email of ${m.label} by click rate — with the likely reason</div></div>
+      <div class="card">
+        <div class="pwhy" style="margin-bottom:9px"><span class="ptag">${prop} · ${b.d} · ${b.t}</span></div>
+        <div class="pquote">${esc(b.subj)}</div>
+        <div class="pstat">
+          <div><div class="sv tnum">${fmt(b.recip)}</div><div class="sl">Recipients</div></div>
+          <div><div class="sv tnum hot">${b.open}%</div><div class="sl">Open rate</div></div>
+          <div><div class="sv tnum hot">${b.click}%</div><div class="sl">Click rate</div></div>
+          <div><div class="sv tnum">${b.cto}%</div><div class="sl">Click-to-open</div></div>
+          <div><div class="sv tnum">${b.unsub}%</div><div class="sl">Unsub rate</div></div>
+        </div>
+        <div class="pwhy"><b>Why it likely performed:</b> ${b.why}${b.url?` · <a href="${esc(b.url)}" target="_blank" rel="noopener">open report ↗</a>`:''}</div>
+      </div>
+      <div class="sec"><span class="eyebrow">What stands out</span><h2>Key highlights — ${m.label}</h2><div class="hint">Evidence-based reads on the month's email performance</div></div>
+      <div class="card"><div id="em-ins"></div></div>
+      <div class="sec"><span class="eyebrow">All emails</span><h2>Every email this month</h2><div class="hint">Newest first · full metrics + a link to each email's Kit report</div></div>
+      <div class="card tblwrap"><table class="tbl" id="em-tbl"></table>
+        <div class="note"><b>Open rate</b> = opened ÷ recipients · <b>Click rate</b> = clicked ÷ recipients · <b>CTO</b> = clicked ÷ opened. Links open each broadcast's Kit report (needs Kit access). Rates are as reported by Kit.</div></div>`;
+    $('#em-ins',el).innerHTML=m.insights.map(i=>{const ic=i.k==='win'?'<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>':i.k==='risk'?'<svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9 2 18a1.7 1.7 0 0 0 1.5 2.6h17A1.7 1.7 0 0 0 22 18L13.7 3.9a1.7 1.7 0 0 0-3 0z"/></svg>':'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>';return `<div class="ins ${i.k}"><div class="mk">${ic}</div><div class="ib">${i.t}</div></div>`;}).join('');
+    const cols=[['d','Date','l'],['subj','Subject','l'],['recip','Recipients','r'],['opened','Opened','r'],['open','Open %','r'],['clicked','Clicked','r'],['click','Click %','r'],['cto','CTO %','r'],['unsub_n','Unsub','r'],['unsub','Unsub %','r'],['url','Link','l']];
+    $('#em-tbl',el).innerHTML=`<thead><tr>${cols.map(c=>`<th class="${c[2]}">${c[1]}</th>`).join('')}</tr></thead><tbody>`+
+      m.emails.map(e=>`<tr>`+cols.map(([k,,al])=>{
+        if(k==='subj') return `<td class="l nmc" title="${esc(e.subj)}">${esc(e.subj)}</td>`;
+        if(k==='url') return `<td class="l">${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener">report ↗</a>`:'<span class="z">—</span>'}</td>`;
+        if(['open','click','cto','unsub'].includes(k)) return `<td class="r">${e[k]}%</td>`;
+        if(al==='r') return `<td class="r">${fmt(e[k])}</td>`;
+        return `<td class="l">${esc(e[k])}</td>`;}).join('')+`</tr>`).join('')+`</tbody>`;
+    const ps=$('#em-prop',el); if(ps) ps.addEventListener('change',()=>{prop=ps.value; mkey=E.data[prop].latest; render();});
+    $('#em-month',el).addEventListener('change',ev=>{mkey=ev.target.value; render();});
+  }
+  render();
+}
+/* ================= ASK — natural-language query over the embedded data (100% client-side) ================= */
+let ASK_PENDING=null;
+const CH_LOOKUP=(DATA.meta&&DATA.meta.chan_lookup)||{};
+const MONTHS=['january','february','march','april','may','june','july','august','september','october','november','december'];
+const PLAT_RX=[['LinkedIn',/\blinkedin\b|\blinked in\b/],['Instagram',/\binstagram\b|\binsta\b|\big\b/],['YouTube',/\byoutube\b|\byt\b/],['TikTok',/\btiktok\b|\btik tok\b/],['Twitter/X',/\btwitter\b|\btweet\b|\bx\b/],['Facebook',/\bfacebook\b|\bfb\b|\bmeta\b/]];
+const METRIC_DEFS=[
+ {id:'rate',label:'Engagement rate',type:'pct',syn:['engagement rate','eng rate','engagement-rate','interaction rate']},
+ {id:'ctr',label:'CTR',type:'pct',syn:['ctr','click through','click-through','clickthrough']},
+ {id:'impressions',label:'Impressions',type:'int',syn:['impression','impressions','views']},
+ {id:'reach',label:'Reach',type:'int',syn:['reach']},
+ {id:'engagement',label:'Engagement',type:'int',syn:['engagement','engagements','interaction','interactions','engaged']},
+ {id:'clicks',label:'Clicks',type:'int',syn:['clicks','click']},
+ {id:'posts',label:'Posts',type:'int',syn:['posts','post ','published','how many post']},
+];
+const EMAIL_METRICS=[
+ {id:'eopen',f:'open_rate',type:'pct',label:'Open rate',syn:['open rate','open %','opens rate']},
+ {id:'eclick',f:'click_rate',type:'pct',label:'Click rate',syn:['click rate','click %']},
+ {id:'eunsub',f:'unsub_rate',type:'pct',label:'Unsubscribe rate',syn:['unsub','unsubscribe','unsubscribed']},
+ {id:'esubs',f:'subscribers',type:'int',label:'Subscribers',syn:['subscriber','subscribers','list size','audience size']},
+ {id:'esent',f:'sent',type:'int',label:'Emails sent',syn:['emails sent','broadcasts','how many email','number of email']},
+ {id:'eopens',f:'total_opened',type:'int',label:'Opens',syn:['opens','opened']},
+ {id:'eclicks',f:'total_clicked',type:'int',label:'Email clicks',syn:['email clicks']},
+];
+const askFmt=(v,t)=>(v==null||v==='')?'—':(t==='pct'?(Math.round(v*10)/10).toFixed(1)+'%':fmt(v));
+function isoWeek(ymd){const d=new Date(ymd+'T00:00:00Z');const dn=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-dn+3);const ft=new Date(Date.UTC(d.getUTCFullYear(),0,4));const wk=1+Math.round(((d-ft)/864e5-3+((ft.getUTCDay()+6)%7))/7);return d.getUTCFullYear()+'-W'+String(wk).padStart(2,'0');}
+function findMetric(q,defs){for(const m of defs){for(const s of m.syn){if(q.includes(s))return m;}}return null;}
+function findPlatform(q){for(const [n,rx] of PLAT_RX){if(rx.test(q))return n;}return null;}
+function findDim(q){for(const c of DATA.channels_full){const bare=c.name.replace(/-/g,'');if(q.replace(/[-\s]/g,'').includes(bare))return{kind:'channel',value:c.name};}const p=findPlatform(q);return p?{kind:'platform',value:p}:null;}
+function monthObj(name){return DATA.monthly.find(m=>m.label.toLowerCase().startsWith(name));}
+function findPeriod(q){
+ let mw=q.match(/\b(?:week|w)\s?-?(\d{1,2})\b/);
+ if(mw){const wk=DATA.weekly.find(w=>w.week.endsWith('W'+mw[1].padStart(2,'0')));if(wk)return{kind:'week',obj:wk,label:'week '+wk.week.split('-W')[1]+' ('+wk.label+')'};}
+ if(/this week|current week|latest week/.test(q))return{kind:'week',obj:DATA.weekly.at(-1),label:'this week ('+DATA.weekly.at(-1).week+')'};
+ if(/last week|previous week|prior week/.test(q))return{kind:'week',obj:DATA.weekly.at(-2),label:'last week ('+DATA.weekly.at(-2).week+')'};
+ for(let i=0;i<12;i++){if(new RegExp('\\b'+MONTHS[i].slice(0,3)+'[a-z]*\\b').test(q)){const mo=monthObj(MONTHS[i]);if(mo)return{kind:'month',obj:mo,label:mo.label};}}
+ if(/this month|current month|latest month/.test(q))return{kind:'month',obj:DATA.monthly.at(-1),label:'this month ('+DATA.monthly.at(-1).label+')'};
+ if(/last month|previous month|prior month/.test(q))return{kind:'month',obj:DATA.monthly.at(-2),label:'last month ('+DATA.monthly.at(-2).label+')'};
+ return null;
+}
+function findAllPeriods(q){const res=[],seen=new Set();
+ const found=[];
+ for(let i=0;i<12;i++){const m=q.match(new RegExp('\\b'+MONTHS[i].slice(0,3)+'[a-z]*\\b'));if(m){const mo=monthObj(MONTHS[i]);if(mo)found.push({pos:m.index,p:{kind:'month',obj:mo,label:mo.label}});}}
+ found.sort((a,b)=>a.pos-b.pos).forEach(f=>{if(!seen.has(f.p.label)){res.push(f.p);seen.add(f.p.label);}});
+ const re=/\b(?:week|w)\s?-?(\d{1,2})\b/g;let m;while((m=re.exec(q))){const wk=DATA.weekly.find(w=>w.week.endsWith('W'+m[1].padStart(2,'0')));if(wk&&!seen.has(wk.week)){res.push({kind:'week',obj:wk,label:'W'+wk.week.split('-W')[1]});seen.add(wk.week);}}
+ return res;
+}
+function aggRows(rows){let im=0,en=0,ck=0;rows.forEach(r=>{im+=r.im||0;en+=r.en||0;ck+=r.ck||0;});return{impressions:im,engagement:en,posts:rows.length,clicks:ck,rate:im?en/im*100:0,ctr:im?ck/im*100:0,reach:null};}
+function answerQuestion(raw){
+ const q=' '+raw.toLowerCase().replace(/[?,.]/g,' ').replace(/\s+/g,' ')+' ';
+ const ok=(metric,scope,value,note,extra)=>({ok:true,metric,scope,value,note,extra});
+ // ---- email domain ----
+ if(/\bemail|newsletter|broadcast|kit\b|subscriber|unsub|open rate/.test(q) && EMAIL.properties.length){
+   const P=EMAIL.data[EMAIL.current]; let mkey=P.latest;
+   for(let i=0;i<12;i++){if(new RegExp('\\b'+MONTHS[i].slice(0,3)+'[a-z]*\\b').test(q)){const f=P.months.find(x=>x.label.toLowerCase().startsWith(MONTHS[i]));if(f)mkey=f.key;}}
+   const m=P.byMonth[mkey]; const em=findMetric(q,EMAIL_METRICS)||EMAIL_METRICS[0];
+   return ok(em.label, EMAIL.current+' email · '+m.label, askFmt(m[em.f],em.type), 'from Kit email data');
+ }
+ const op=/\bcompare|versus|\bvs\b|\bvs\.|difference between/.test(q)?'compare':/\bbest|highest|\btop\b|most|strongest|maximum|\bmax\b/.test(q)?'best':/\bworst|lowest|least|weakest|minimum|\bmin\b/.test(q)?'worst':'value';
+ const metric=findMetric(q,METRIC_DEFS);
+ // ---- best / worst ----
+ if(op==='best'||op==='worst'){
+   const met=metric||METRIC_DEFS[0]; const dir=op==='best'?1:-1; let items,scope;
+   if(/\bweek/.test(q)){items=DATA.weekly.map(w=>({n:'W'+w.week.split('-W')[1]+' ('+w.label+')',v:w[met.id]}));scope='week';}
+   else if(/\bmonth/.test(q)){items=DATA.monthly.map(m=>({n:m.label,v:m[met.id]}));scope='month';}
+   else if(/\bchannel/.test(q)){items=DATA.channels_full.map(c=>({n:c.name,v:c[met.id]}));scope='channel';}
+   else{items=DATA.platforms_full.map(p=>({n:p.name,v:p[met.id]}));scope='platform';}
+   items.sort((a,b)=>dir*(b.v-a.v)); const t=items[0];
+   return ok((op==='best'?'Best ':'Worst ')+scope+' by '+met.label, t.n, askFmt(t.v,met.type), 'scanned '+items.length+' '+scope+'s');
+ }
+ // ---- compare ----
+ if(op==='compare'){
+   const ps=findAllPeriods(q); const met=metric||METRIC_DEFS[2];
+   if(ps.length>=2){const a=ps[0],b=ps[1],va=a.obj[met.id],vb=b.obj[met.id],d=va-vb,pc=vb?d/vb*100:0;
+     return ok('Compare · '+met.label, a.label+' vs '+b.label, askFmt(va,met.type)+'  vs  '+askFmt(vb,met.type), 'change from '+b.label+' to '+a.label, (d>=0?'▲ +':'▼ ')+askFmt(Math.abs(d),met.type)+' ('+(pc>=0?'+':'')+Math.round(pc)+'%)');}
+ }
+ // ---- value ----
+ const dim=findDim(q), period=findPeriod(q);
+ if(!metric && !dim && !period) return {ok:false};
+ const met=metric||METRIC_DEFS[2]; // default impressions
+ if(dim){
+   if(period && (period.kind==='month'||period.kind==='week')){
+     if(met.id==='reach') return ok('Reach', dim.value+' · '+period.label, '—', 'Reach isn’t reported at a platform/channel × time breakdown — ask for impressions or engagement here, or reach without the time filter.');
+     const rows=DATA.posts_table.filter(r=>(period.kind==='month'?(r.ymd||'').startsWith(period.obj.month):isoWeek(r.ymd)===period.obj.week) && (dim.kind==='platform'?r.pl===dim.value:CH_LOOKUP[r.pl+'|'+r.pr]===dim.value));
+     const a=aggRows(rows);
+     return ok(met.label, dim.value+' · '+period.label, askFmt(a[met.id],met.type), 'computed from '+rows.length+' posts');
+   }
+   const src=dim.kind==='platform'?DATA.platforms_full.find(p=>p.name===dim.value):DATA.channels_full.find(c=>c.name===dim.value);
+   return ok(met.label, dim.value+' · whole window', askFmt(src[met.id],met.type), 'from '+dim.kind+' totals (Jun 1 – '+DATA.meta.date_max+')');
+ }
+ const src=period?period.obj:DATA.overall;
+ return ok(met.label, period?period.label:('whole window (Jun 1 – '+DATA.meta.date_max+')'), askFmt(src[met.id],met.type), period?('from '+period.kind+' totals'):'from window totals');
+}
+function pAsk(el){
+ el.innerHTML=`<div class="sec" style="margin-top:6px"><span class="eyebrow">Ask</span><h2>Ask the data</h2><div class="hint">Type a question in plain English — answered instantly from this report's own data, right in your browser. No data leaves the page.</div></div>
+   <div class="ask-box"><svg class="ask-ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.2-4.2"/></svg><input id="ask-in" placeholder="e.g. total impressions in August" autocomplete="off"></div>
+   <div class="ask-chips" id="ask-chips"></div><div id="ask-ans"></div>`;
+ const ex=['Total impressions in August','Engagement rate for LinkedIn','Best week by engagement','Clicks last week','Compare September vs August impressions','LinkedIn impressions in August','Best channel by engagement rate','Email open rate in September'];
+ $('#ask-chips',el).innerHTML=ex.map(x=>`<button class="ask-chip">${x}</button>`).join('');
+ const inp=$('#ask-in',el), ans=$('#ask-ans',el);
+ function show(q){q=(q||'').trim();if(!q)return; inp.value=q; const r=answerQuestion(q);
+   if(!r.ok){ans.innerHTML=`<div class="card ask-card miss"><div class="ask-q">“${esc(q)}”</div><div class="ask-miss">I couldn't read that one. I understand a <b>metric</b> (impressions, engagement, reach, clicks, engagement rate, CTR, posts) for a <b>month</b>, <b>week</b>, <b>platform</b> or <b>channel</b> — plus <b>best/worst</b> and <b>compare</b>, and email open/click/unsub rates. Try an example chip above.</div></div>`;return;}
+   ans.innerHTML=`<div class="card ask-card"><div class="ask-q">“${esc(q)}”</div><div class="ask-val tnum">${r.value}</div><div class="ask-scope">${esc(r.metric)} · ${esc(r.scope)}</div>${r.extra?`<div class="ask-extra">${esc(r.extra)}</div>`:''}${r.note?`<div class="ask-note">${esc(r.note)}</div>`:''}</div>`;}
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter')show(inp.value);});
+ $$('.ask-chip',el).forEach(b=>b.addEventListener('click',()=>show(b.textContent)));
+ if(ASK_PENDING){show(ASK_PENDING);ASK_PENDING=null;} else setTimeout(()=>inp.focus(),60);
+}
+const R={ask:pAsk,overview:pOverview,weekly:pWeekly,monthly:pMonthly,platforms:pPlatforms,channels:pChannels,hashtags:pHashtags,timing:pTiming,posts:pPosts,email:pEmail};
+const TITLES={ask:'Ask the data',overview:'Overview',weekly:'Weekly · Week-on-Week',monthly:'Monthly · Month-on-Month',platforms:'Platforms',channels:'Channels',hashtags:'Hashtags',timing:'Timing',posts:'All posts',email:'Email · Kit'};
+let rendered={};
+function go(v){$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===v));$$('.page').forEach(s=>s.classList.toggle('active',s.dataset.page===v));$('#ttTitle').textContent=TITLES[v];
+  const el=$(`.page[data-page="${v}"]`); if(v==='ask'||!rendered[v]){R[v](el); rendered[v]=1;} window.scrollTo({top:0,behavior:'smooth'}); closeMenu();}
+$$('.nav-btn').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+
+function ico(dark){$('#themeIcon').innerHTML=dark?'<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.5 4.5l1.8 1.8M17.7 17.7l1.8 1.8M2 12h2.5M19.5 12H22M4.5 19.5l1.8-1.8M17.7 6.3l1.8-1.8"/>':'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';}
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);ico(t==='dark');try{localStorage.setItem('sp-theme',t);}catch(e){}rendered={}; go($('.nav-btn.active').dataset.page);}
+$('#themeBtn').addEventListener('click',()=>{const c=document.documentElement.getAttribute('data-theme');const d=c?c==='dark':matchMedia('(prefers-color-scheme:dark)').matches;setTheme(d?'light':'dark');});
+(function(){let t;try{t=localStorage.getItem('sp-theme');}catch(e){}if(t){document.documentElement.setAttribute('data-theme',t);ico(t==='dark');}else ico(matchMedia('(prefers-color-scheme:dark)').matches);})();
+function closeMenu(){$('#sidebar').classList.remove('open');$('#scrim').hidden=true;}
+$('#menuBtn').addEventListener('click',()=>{$('#sidebar').classList.add('open');$('#scrim').hidden=false;});
+$('#scrim').addEventListener('click',closeMenu);
+$('#ask-top-in').addEventListener('keydown',e=>{if(e.key==='Enter'){ASK_PENDING=e.target.value; e.target.value=''; go('ask');}});
+
+// chrome fills
+$('#n-ov').textContent=DATA.meta.n_posts; $('#n-pf').textContent=DATA.meta.n_platforms; $('#n-ch').textContent=DATA.meta.n_channels; $('#n-ht').textContent=DATA.n_hashtags; $('#n-po').textContent=DATA.posts_table.length;
+try{const _e=EMAIL.data[EMAIL.current];$('#n-em').textContent=_e.byMonth[_e.latest].sent;}catch(e){}
+$('#foot-range').textContent=`${DATA.meta.date_min} – ${DATA.meta.date_max}`; $('#foot-meta').textContent=`${DATA.meta.weeks.length} weeks · sample data`; $('#pill-range').textContent=`${DATA.meta.date_min} – ${DATA.meta.date_max}`;
+pOverview($('.page[data-page="overview"]')); rendered.overview=1;
+</script>
+
+</body></html>
